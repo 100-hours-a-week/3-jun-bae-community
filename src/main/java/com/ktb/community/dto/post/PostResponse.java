@@ -2,6 +2,7 @@ package com.ktb.community.dto.post;
 
 import com.ktb.community.entity.File;
 import com.ktb.community.entity.Post;
+import com.ktb.community.entity.PostStats;
 import com.ktb.community.dto.user.UserResponse;
 
 import java.time.LocalDateTime;
@@ -14,13 +15,20 @@ public record PostResponse(
         UserResponse author,
         List<String> fileUrls,
         LocalDateTime createdAt,
-        LocalDateTime updatedAt
+        LocalDateTime updatedAt,
+        long viewCount,
+        long likeCount,
+        long replyCount
 ) {
 
     public static PostResponse from(Post post) {
         List<String> fileUrls = post.getFiles().stream()
                 .map(File::getFileUrl)
                 .toList();
+        PostStats stats = post.getStats();
+        long viewCount = stats != null ? stats.getViewCount() : 0L;
+        long likeCount = stats != null ? stats.getLikeCount() : 0L;
+        long replyCount = stats != null ? stats.getReplyCount() : 0L;
         return new PostResponse(
                 post.getId(),
                 post.getTitle(),
@@ -28,7 +36,10 @@ public record PostResponse(
                 UserResponse.from(post.getUser()),
                 fileUrls,
                 post.getCreatedAt(),
-                post.getUpdatedAt()
+                post.getUpdatedAt(),
+                viewCount,
+                likeCount,
+                replyCount
         );
     }
 }

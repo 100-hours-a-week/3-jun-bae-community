@@ -2,6 +2,7 @@ package com.ktb.community.controller;
 
 import com.ktb.community.dto.post.PostCreateRequest;
 import com.ktb.community.dto.post.PostCursorResponse;
+import com.ktb.community.dto.post.PostLikeResponse;
 import com.ktb.community.dto.post.PostResponse;
 import com.ktb.community.dto.post.PostSummaryResponse;
 import com.ktb.community.dto.post.PostUpdateRequest;
@@ -44,7 +45,7 @@ public class PostController {
 
     @GetMapping("/{postId}")
     public ResponseEntity<PostResponse> get(@PathVariable Long postId) {
-        Post post = postService.getPostOrThrow(postId);
+        Post post = postService.viewPost(postId);
         return ResponseEntity.ok(PostResponse.from(post));
     }
 
@@ -74,6 +75,22 @@ public class PostController {
         User user = userService.getByEmailOrThrow(principal.getUsername());
         postService.deletePost(postId, user);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{postId}/likes")
+    public ResponseEntity<PostLikeResponse> like(@PathVariable Long postId,
+                                                 @AuthenticationPrincipal UserDetails principal) {
+        ensureAuthenticated(principal);
+        User user = userService.getByEmailOrThrow(principal.getUsername());
+        return ResponseEntity.ok(PostLikeResponse.from(postService.likePost(postId, user)));
+    }
+
+    @DeleteMapping("/{postId}/likes")
+    public ResponseEntity<PostLikeResponse> unlike(@PathVariable Long postId,
+                                                   @AuthenticationPrincipal UserDetails principal) {
+        ensureAuthenticated(principal);
+        User user = userService.getByEmailOrThrow(principal.getUsername());
+        return ResponseEntity.ok(PostLikeResponse.from(postService.unlikePost(postId, user)));
     }
 
     private void ensureAuthenticated(UserDetails principal) {

@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @Table(name = "comments")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
-public class Comment {
+public class Comment implements OwnedByUser {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -1,7 +1,7 @@
 package com.ktb.community.repository;
 
-import com.ktb.community.entity.QComment;
 import com.ktb.community.entity.QPost;
+import com.ktb.community.entity.QPostStats;
 import com.ktb.community.entity.QUser;
 import com.ktb.community.repository.projection.PostSummaryProjection;
 import com.ktb.community.support.CursorPage;
@@ -23,7 +23,7 @@ public class PostQueryRepositoryImpl implements PostQueryRepository {
     public CursorPage<PostSummaryProjection> findAllByCursor(Long cursorId, int size) {
         QPost post = QPost.post;
         QUser user = QUser.user;
-        QComment comment = QComment.comment;
+        QPostStats postStats = QPostStats.postStats;
 
         List<PostSummaryProjection> results = queryFactory
                 .select(Projections.constructor(
@@ -35,14 +35,14 @@ public class PostQueryRepositoryImpl implements PostQueryRepository {
                         user.nickname,
                         post.createdAt,
                         post.updatedAt,
-                        comment.id.count()
+                        postStats.viewCount.coalesce(0L),
+                        postStats.likeCount.coalesce(0L),
+                        postStats.replyCount.coalesce(0L)
                 ))
                 .from(post)
                 .join(post.user, user)
-                .leftJoin(post.comments, comment)
-                .on(comment.deletedAt.isNull())
+                .leftJoin(postStats).on(postStats.post.eq(post))
                 .where(post.deletedAt.isNull(), cursorPredicate(cursorId))
-                .groupBy(post.id, user.id, user.nickname, post.title, post.content, post.createdAt, post.updatedAt)
                 .orderBy(post.id.desc())
                 .limit(size + 1L)
                 .fetch();

@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
-public class Post {
+public class Post implements OwnedByUser {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -47,7 +47,10 @@ public class Post {
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PostFile> attachments = new ArrayList<>();
 
-    @Builder
+    @OneToOne(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private PostStats stats;
+
+    @Builder // 빌더 패턴 사용으로 가독성 향상
     private Post(User user, String title, String content) {
         this.user = user;
         this.title = title;
@@ -88,5 +91,12 @@ public class Post {
         return attachments.stream()
                 .map(PostFile::getFile)
                 .collect(Collectors.toList());
+    }
+    // PostStats 와 1대1 연결을 위해 초기 생성이
+    public void attachStats(PostStats stats) {
+        this.stats = stats;
+        if (stats != null) {
+            stats.linkPost(this);
+        }
     }
 }

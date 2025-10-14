@@ -2,9 +2,11 @@ package com.ktb.community.service;
 
 import com.ktb.community.entity.File;
 import com.ktb.community.entity.Post;
+import com.ktb.community.entity.PostLike;
 import com.ktb.community.entity.User;
 import com.ktb.community.dto.post.PostSummaryResponse;
 import com.ktb.community.repository.FileRepository;
+import com.ktb.community.repository.PostLikeRepository;
 import com.ktb.community.repository.PostRepository;
 import com.ktb.community.repository.projection.PostSummaryProjection;
 import com.ktb.community.support.CursorPage;
@@ -24,12 +26,17 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final FileRepository fileRepository;
+    private final OwnershipVerifier ownershipVerifier;
+    private final PostStatsService postStatsService;
+    private final PostLikeRepository postLikeRepository;
 
     @Transactional
     public Post createPost(User author, String title, String content, List<Long> fileIds) {
         Post post = Post.create(author, title, content);
         attachFiles(post, fileIds);
-        return postRepository.save(post);
+        Post saved = postRepository.save(post);
+        postStatsService.initialize(saved);
+        return saved;
     }
 
     public CursorPage<PostSummaryResponse> getPosts(Long cursorId, int size) {
@@ -46,9 +53,16 @@ public class PostService {
     }
 
     @Transactional
+    public Post viewPost(Long postId) {
+        Post post = getPostOrThrow(postId);
+        postStatsService.increaseView(postId);
+        return post;
+    }
+
+    @Transactional
     public Post updatePost(Long postId, User user, String title, String content, List<Long> fileIds) {
         Post post = getPostOrThrow(postId);
-        verifyOwnership(post, user);
+        ownershipVerifier.check(post, user, "Only author can modify this post");
         post.update(title, content);
         if (fileIds != null) {
             List<File> files = loadFiles(fileIds);
@@ -61,7 +75,7 @@ public class PostService {
     @Transactional
     public void deletePost(Long postId, User user) {
         Post post = getPostOrThrow(postId);
-        verifyOwnership(post, user);
+        ownershipVerifier.check(post, user, "Only author can modify this post");
         post.softDelete();
     }
 
@@ -82,9 +96,34 @@ public class PostService {
         return files;
     }
 
-    private void verifyOwnership(Post post, User user) {
-        if (!post.getUser().getId().equals(user.getId())) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Only author can modify this post");
+    @Transactional
+    public PostLikeResult likePost(Long postId, User user) {
+        Post post = getPostOrThrow(postId);
+        boolean alreadyLiked = postLikeRepository.existsByPostIdAndUserId(postId, user.getId());
+        long likeCount;
+
+        if (alreadyLiked) {
+            likeCount = postStatsService.getStats(postId).getLikeCount();
+        } else {
+            postLikeRepository.save(PostLike.of(user, post));
+            likeCount = postStatsService.increaseLike(postId).getLikeCount();
         }
+
+        return new PostLikeResult(postId, true, likeCount);
+    }
+
+    @Transactional
+    public PostLikeResult unlikePost(Long postId, User user) {
+        Post post = getPostOrThrow(postId);
+        return postLikeRepository.findByPostIdAndUserId(postId, user.getId())
+                .map(existing -> {
+                    postLikeRepository.delete(existing);
+                    long likeCount = postStatsService.decreaseLike(postId).getLikeCount();
+                    return new PostLikeResult(postId, false, likeCount);
+                })
+                .orElseGet(() -> new PostLikeResult(post.getId(), false, postStatsService.getStats(postId).getLikeCount()));
+    }
+
+    public record PostLikeResult(Long postId, boolean liked, long likeCount) {
     }
 }

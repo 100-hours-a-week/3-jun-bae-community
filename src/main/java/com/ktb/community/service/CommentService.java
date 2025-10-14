@@ -19,12 +19,16 @@ public class CommentService {
 
     private final CommentRepository commentRepository;
     private final PostService postService;
+    private final OwnershipVerifier ownershipVerifier;
+    private final PostStatsService postStatsService;
 
     @Transactional
     public Comment addComment(Long postId, User user, String content) {
         Post post = postService.getPostOrThrow(postId);
         Comment comment = Comment.create(user, post, content);
-        return commentRepository.save(comment);
+        Comment saved = commentRepository.save(comment);
+        postStatsService.increaseReply(postId);
+        return saved;
     }
 
     public Page<Comment> getComments(Long postId, Pageable pageable) {
@@ -35,7 +39,7 @@ public class CommentService {
     @Transactional
     public Comment updateComment(Long commentId, User user, String content) {
         Comment comment = getActiveComment(commentId);
-        verifyOwnership(comment, user);
+        ownershipVerifier.check(comment, user, "Only author can modify this comment");
         comment.updateContent(content);
         return comment;
     }
@@ -43,8 +47,9 @@ public class CommentService {
     @Transactional
     public void deleteComment(Long commentId, User user) {
         Comment comment = getActiveComment(commentId);
-        verifyOwnership(comment, user);
+        ownershipVerifier.check(comment, user, "Only author can modify this comment");
         comment.softDelete();
+        postStatsService.decreaseReply(comment.getPost().getId());
     }
 
     private Comment getActiveComment(Long commentId) {
@@ -53,9 +58,4 @@ public class CommentService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Comment not found"));
     }
 
-    private void verifyOwnership(Comment comment, User user) {
-        if (!comment.getUser().getId().equals(user.getId())) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Only author can modify this comment");
-        }
-    }
 }

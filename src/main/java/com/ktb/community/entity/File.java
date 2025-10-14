@@ -33,7 +33,7 @@ public class File {
     @Column(nullable = false)
     private String fileUrl;
 
-    @Column(name = "is_commited")
+    @Column(name = "is_committed")
     private boolean committed;
 
     @CreatedDate

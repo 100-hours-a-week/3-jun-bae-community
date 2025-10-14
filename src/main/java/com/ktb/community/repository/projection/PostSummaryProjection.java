@@ -10,6 +10,8 @@ public record PostSummaryProjection(
         String authorNickname,
         LocalDateTime createdAt,
         LocalDateTime updatedAt,
-        Long commentCount
+        Long viewCount,
+        Long likeCount,
+        Long replyCount
 ) {
 }

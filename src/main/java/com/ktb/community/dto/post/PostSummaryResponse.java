@@ -12,7 +12,9 @@ public record PostSummaryResponse(
         String authorNickname,
         LocalDateTime createdAt,
         LocalDateTime updatedAt,
-        Long commentCount
+        Long viewCount,
+        Long likeCount,
+        Long replyCount
 ) {
 
     public static PostSummaryResponse from(PostSummaryProjection projection) {
@@ -24,7 +26,9 @@ public record PostSummaryResponse(
                 projection.authorNickname(),
                 projection.createdAt(),
                 projection.updatedAt(),
-                projection.commentCount()
+                projection.viewCount(),
+                projection.likeCount(),
+                projection.replyCount()
         );
     }
 }

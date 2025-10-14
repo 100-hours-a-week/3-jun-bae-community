@@ -1,14 +1,18 @@
 package com.ktb.community.entity;
 
-import jakarta.persistence.*;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.ForeignKey;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.MapsId;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @Entity
 @Table(name = "post_stats")
 @Getter
@@ -16,36 +20,61 @@ import lombok.extern.slf4j.Slf4j;
 public class PostStats {
 
     @Id
+    @Column(name = "post_id")
+    private Long postId;
+
     @OneToOne(fetch = FetchType.LAZY)
+    @MapsId
     @JoinColumn(name = "post_id", foreignKey = @ForeignKey(name = "fk_post_stats_post"))
     private Post post;
 
     @Column(nullable = false)
-    private Long likeCount = 0L;
+    private long likeCount;
 
     @Column(nullable = false)
-    private Long viewCount = 0L;
+    private long viewCount;
 
     @Column(nullable = false)
-    private Long replyCount = 0L;
+    private long replyCount;
 
-    public PostStats(Post post) {
+    private PostStats(Post post) {
         this.post = post;
+        this.postId = post.getId();
         this.likeCount = 0L;
         this.viewCount = 0L;
         this.replyCount = 0L;
     }
 
-    // 나중에 redis로 전환
-    public void plusLike() {
+    public static PostStats initialize(Post post) {
+        return new PostStats(post);
+    }
+
+    void linkPost(Post post) {
+        this.post = post;
+        this.postId = post.getId();
+    }
+
+    public void incrementLike() {
         this.likeCount++;
     }
-    public void plusView() {
+
+    public void decrementLike() {
+        if (this.likeCount > 0) {
+            this.likeCount--;
+        }
+    }
+
+    public void incrementView() {
         this.viewCount++;
     }
-    public void plusReply() {
+
+    public void incrementReply() {
         this.replyCount++;
     }
+
+    public void decrementReply() {
+        if (this.replyCount > 0) {
+            this.replyCount--;
+        }
+    }
 }
-
-

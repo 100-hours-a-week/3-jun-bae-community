@@ -12,6 +12,6 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostQueryRepo
 
     Optional<Post> findByIdAndDeletedAtIsNull(Long id);
 
-    @EntityGraph(attributePaths = {"user", "attachments", "attachments.file"})
+    @EntityGraph(attributePaths = {"user", "attachments", "attachments.file", "stats"})
     Optional<Post> findWithFilesByIdAndDeletedAtIsNull(Long id);
 }
