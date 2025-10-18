@@ -1,14 +1,6 @@
 package com.ktb.community.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.ForeignKey;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.MapsId;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -39,7 +31,7 @@ public class PostStats {
 
     private PostStats(Post post) {
         this.post = post;
-        this.postId = post.getId();
+        // this.postId = post.getId();MapsId 로 자동생성, 여기서 수동으로 값 부여시 StaleObjectStateException 발생
         this.likeCount = 0L;
         this.viewCount = 0L;
         this.replyCount = 0L;
@@ -51,7 +43,7 @@ public class PostStats {
 
     void linkPost(Post post) {
         this.post = post;
-        this.postId = post.getId();
+        // this.postId = post.getId(); MapsId 로 자동생성, 여기서 수동으로 값 부여시 StaleObjectStateException 발생
     }
 
     public void incrementLike() {

@@ -92,7 +92,7 @@ public class Post implements OwnedByUser {
                 .map(PostFile::getFile)
                 .collect(Collectors.toList());
     }
-    // PostStats 와 1대1 연결을 위해 초기 생성이
+    // PostStats 와 1대1 연결을 위해 초기 생성이 필요
     public void attachStats(PostStats stats) {
         this.stats = stats;
         if (stats != null) {
