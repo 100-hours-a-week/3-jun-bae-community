@@ -40,7 +40,7 @@ public class FileStorageService {
         }
 
         String storageKey = "uploads/" + UUID.randomUUID();
-        String fileUrl = "https://s3.amazonaws.com/" + storageKey;
+        String fileUrl = "https://"+bucketName+".s3.amazonaws.com/" + storageKey;
 
         try {
             //multipartFile.getInputStream().transferTo(java.io.OutputStream.nullOutputStream());
