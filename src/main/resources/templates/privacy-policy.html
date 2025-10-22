@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title th:text="${siteName} + ' | 개인정보처리방침'">개인정보처리방침</title>
+    <meta name="description" content="서비스 제공 및 안정적 운영을 위한 개인정보 처리방침" />
+    <link rel="stylesheet" th:href="@{|${frontEndHost}/css/pico.min.css|}">
+</head>
+<body class="container">
+<div class="container">
+    <header>
+        <h1>개인정보처리방침</h1>
+        <div class="sub">
+            <span th:text="${siteName}">사이트명</span>은(는) 관련 법령을 준수하며 개인정보를 안전하게 처리합니다.
+            <br/>시행일:
+            <time th:text="${#temporals.format(policy.updatedAt, 'yyyy.MM.dd')}">2025.10.21</time>
+        </div>
+    </header>
+    <strong>목차</strong>
+    <nav class="toc" aria-label="목차">
+        <ol>
+            <li><a href="#a1">제1조 수집하는 개인정보 항목</a></li>
+            <li><a href="#a2">제2조 개인정보 수집 및 이용 목적</a></li>
+            <li><a href="#a3">제3조 개인정보의 보유 및 이용기간</a></li>
+            <li><a href="#a4">제4조 쿠키의 사용</a></li>
+            <li><a href="#a5">제5조 개인정보의 제3자 제공</a></li>
+            <li><a href="#a6">제6조 개인정보의 국외 이전</a></li>
+            <li><a href="#a7">제7조 개인정보의 안전성 확보 조치</a></li>
+            <li><a href="#a8">제8조 이용자의 권리와 행사 방법</a></li>
+            <li><a href="#a9">제9조 개인정보 보호책임자</a></li>
+            <li><a href="#a10">제10조 권익침해 구제방법</a></li>
+        </ol>
+    </nav>
+
+    <main>
+        <section id="a1">
+            <h2>제1조 수집하는 개인정보 항목</h2>
+            <p>서비스 제공 및 안정적인 운영을 위해 아래 정보를 수집합니다.</p>
+            <ul>
+                <li>이메일 <span class="note">(회원 식별 및 알림용)</span></li>
+                <li>닉네임 <span class="note">(커뮤니티 활동용)</span></li>
+                <li>해시된 비밀번호 <span class="note">(본인 인증용)</span></li>
+                <li>접속 로그 <span class="note">(IP, 브라우저 정보, 접속 시간 등)</span></li>
+                <li>쿠키 <span class="note">(세션 유지 목적)</span></li>
+            </ul>
+        </section>
+
+        <section id="a2">
+            <h2>제2조 개인정보 수집 및 이용 목적</h2>
+            <ul>
+                <li>회원가입 및 본인 확인</li>
+                <li>커뮤니티 서비스 제공 및 운영</li>
+                <li>로그인 상태 유지 및 사용자 인증</li>
+                <li>시스템 보안 및 이상 징후 탐지</li>
+                <li>법령 위반 및 부정 이용 방지</li>
+                <li>알림 및 서비스 공지 전달</li>
+            </ul>
+        </section>
+
+        <section id="a3">
+            <h2>제3조 개인정보의 보유 및 이용기간</h2>
+            <ul>
+                <li>회원 탈퇴 시 개인정보는 즉시 파기합니다.</li>
+                <li>다만, 관련 법령에 따라 보존이 필요한 경우 예외적으로 보관합니다.</li>
+            </ul>
+            <ul>
+                <li>로그인 기록(IP 등): <strong>3개월</strong> <span class="note">(정보통신망법 제15조의2)</span></li>
+                <li>분쟁 해결 및 법령상 의무 이행 기록: <strong>최대 3년</strong></li>
+            </ul>
+        </section>
+
+        <section id="a4">
+            <h2>제4조 쿠키의 사용</h2>
+            <ul>
+                <li>세션 쿠키(Session Cookie)를 이용해 로그인 상태를 유지합니다.</li>
+                <li>쿠키에는 개인정보가 직접 저장되지 않으며, 브라우저 종료 시 자동 삭제됩니다.</li>
+                <li>이용자는 브라우저 설정을 통해 쿠키 저장을 거부할 수 있으나, 이 경우 로그인 유지 기능이 제한될 수 있습니다.</li>
+            </ul>
+            <p class="note">세션 쿠키 식별자 예시: <code class="badge">JSESSIONID</code>, <code class="badge">SESSION</code> (서비스 구성에 따라 상이)</p>
+        </section>
+
+        <section id="a5">
+            <h2>제5조 개인정보의 제3자 제공</h2>
+            <p>원칙적으로 이용자 개인정보를 제3자에게 제공하지 않습니다. 다만, 아래의 경우 제공될 수 있습니다.</p>
+            <ul>
+                <li>법령에 따라 수사기관, 법원 등의 요구가 있는 경우</li>
+                <li>이용자가 사전에 동의한 경우</li>
+            </ul>
+        </section>
+
+        <section id="a6">
+            <h2>제6조 개인정보의 국외 이전</h2>
+            <p>서비스 인프라 운영을 위해 해외 클라우드 서비스를 이용할 수 있으며, 이에 따라 개인정보가 국외로 이전될 수 있습니다.</p>
+            <dl>
+                <dt>국외 이전 목적</dt>
+                <dd>서비스 제공 및 안정적 운영</dd>
+                <dt>이전 국가</dt>
+                <dd th:text="${#strings.listJoin(policy.transferCountries, ', ')}">
+                    미국 및 기타 서비스 제공에 필요한 국가
+                </dd>
+
+
+                <dt>이전 항목</dt>
+                <dd>이메일, 닉네임, 해시된 비밀번호, 세션 정보, 로그 정보</dd>
+                <dt>이전 시점</dt>
+                <dd>회원 가입 및 로그인 시점, 서비스 이용 중 자동 전송</dd>
+                <dt>보관 기간</dt>
+                <dd>제3조에서 정한 보유 및 이용기간과 동일</dd>
+                <dt>수탁자</dt>
+                <dd th:text="${cloud.vendor}">글로벌 인증을 갖춘 클라우드 서비스 사업자</dd>
+                <dt>보안 기준</dt>
+                <dd th:text="${cloud.compliance}">국제 보안 인증 기준에 따라 안전하게 관리</dd>
+            </dl>
+        </section>
+
+        <section id="a7">
+            <h2>제7조 개인정보의 안전성 확보 조치</h2>
+            <ul>
+                <li>비밀번호 해시 암호화 저장 <span class="note">(예: bcrypt, Argon2 등 적정 알고리즘 사용)</span></li>
+                <li>IP 및 접속 기록의 안전한 보관</li>
+                <li>클라우드 기반 보안 관리 및 접근 통제</li>
+                <li>정기적 보안 점검 및 로그 모니터링</li>
+                <li>관리자 접근 최소화 및 이력 관리</li>
+            </ul>
+        </section>
+
+        <section id="a8">
+            <h2>제8조 이용자의 권리와 행사 방법</h2>
+            <ul>
+                <li>이용자는 언제든지 자신의 개인정보를 조회, 수정, 삭제할 수 있습니다.</li>
+                <li>회원 탈퇴 시 개인정보는 즉시 파기됩니다.</li>
+                <li>관련 문의는 아래 개인정보 보호책임자에게 요청할 수 있습니다.</li>
+            </ul>
+        </section>
+
+        <section id="a9">
+            <h2>제9조 개인정보 보호책임자</h2>
+            <dl>
+                <dt>이름</dt>
+                <dd th:text="${dpo.name}">[담당자 이름]</dd>
+                <dt>이메일</dt>
+                <dd><a th:href="${'mailto:' + dpo.email}" th:text="${dpo.email}">[담당자 이메일]</a></dd>
+            </dl>
+            <p>문의 시 가능한 한 신속하고 성실하게 답변합니다.</p>
+        </section>
+
+        <section id="a10">
+            <h2>제10조 권익침해 구제방법</h2>
+            <ul>
+                <li>개인정보보호위원회: <a href="https://www.pipc.go.kr" target="_blank" rel="noopener">https://www.pipc.go.kr</a></li>
+                <li>개인정보침해신고센터: <a href="tel:118">118</a></li>
+                <li>경찰청 사이버안전국: <a href="tel:182">182</a></li>
+            </ul>
+        </section>
+    </main>
+
+    <footer>
+        <span th:text="'마지막 업데이트: ' + ${#temporals.format(policy.updatedAt, 'yyyy.MM.dd')}">마지막 업데이트: 2025.10.21</span>
+    </footer>
+</div>
+</body>
+</html>
