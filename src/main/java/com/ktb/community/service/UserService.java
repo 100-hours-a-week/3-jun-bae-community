@@ -46,6 +46,10 @@ public class UserService {
         return !userRepository.existsByEmail(email);
     }
 
+    public boolean isNicknameAvailable(String nickname) {
+        return !userRepository.existsByNickname(nickname);
+    }
+
     public User getByEmailOrThrow(String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));

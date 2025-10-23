@@ -96,6 +96,13 @@ public class PostService {
         return files;
     }
 
+    public PostLikeResult checkPostLiked(Long postId, User user) {
+        boolean alreadyLiked = postLikeRepository.existsByPostIdAndUserId(postId, user.getId());
+        long likeCount;
+        likeCount = postStatsService.getStats(postId).getLikeCount();
+        return new PostLikeResult(postId, alreadyLiked, likeCount);
+    }
+
     @Transactional
     public PostLikeResult likePost(Long postId, User user) {
         Post post = getPostOrThrow(postId);

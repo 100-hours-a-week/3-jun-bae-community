@@ -76,6 +76,12 @@ public class PostController {
         postService.deletePost(postId, user);
         return ResponseEntity.noContent().build();
     }
+    @GetMapping("/{postId}/likes")
+    public ResponseEntity<PostLikeResponse> getLikes(@PathVariable Long postId, @AuthenticationPrincipal UserDetails principal) {
+        ensureAuthenticated(principal);
+        User user = userService.getByEmailOrThrow(principal.getUsername());
+        return ResponseEntity.ok(PostLikeResponse.from(postService.checkPostLiked(postId, user)));
+    }
 
     @PostMapping("/{postId}/likes")
     public ResponseEntity<PostLikeResponse> like(@PathVariable Long postId,

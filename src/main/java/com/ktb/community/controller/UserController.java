@@ -1,6 +1,7 @@
 package com.ktb.community.controller;
 
 import com.ktb.community.dto.user.EmailCheckResponse;
+import com.ktb.community.dto.user.NicknameCheckResponse;
 import com.ktb.community.dto.user.UserRegistrationRequest;
 import com.ktb.community.dto.user.UserResponse;
 import com.ktb.community.entity.User;
@@ -30,6 +31,12 @@ public class UserController {
     public ResponseEntity<EmailCheckResponse> checkEmail(@RequestParam String email) {
         boolean available = userService.isEmailAvailable(email);
         return ResponseEntity.ok(new EmailCheckResponse(available));
+    }
+
+    @GetMapping("/check-nickname")
+    public ResponseEntity<NicknameCheckResponse> checkNickname(@RequestParam String nickname) {
+        boolean available = userService.isNicknameAvailable(nickname);
+        return ResponseEntity.ok(new NicknameCheckResponse(available));
     }
 
     @PostMapping
