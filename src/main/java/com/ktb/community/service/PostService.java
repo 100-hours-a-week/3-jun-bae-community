@@ -32,6 +32,8 @@ public class PostService {
 
     @Transactional
     public Post createPost(User author, String title, String content, List<Long> fileIds) {
+        checkStringLengthOrThrow(title, 150);
+        checkStringLengthOrThrow(content, 20000);
         Post post = Post.create(author, title, content);
         attachFiles(post, fileIds);
         Post saved = postRepository.save(post);
@@ -61,6 +63,8 @@ public class PostService {
 
     @Transactional
     public Post updatePost(Long postId, User user, String title, String content, List<Long> fileIds) {
+        checkStringLengthOrThrow(title, 150);
+        checkStringLengthOrThrow(content, 20000);
         Post post = getPostOrThrow(postId);
         ownershipVerifier.check(post, user, "Only author can modify this post");
         post.update(title, content);
@@ -132,5 +136,12 @@ public class PostService {
     }
 
     public record PostLikeResult(Long postId, boolean liked, long likeCount) {
+    }
+
+    private boolean checkStringLengthOrThrow(String str, long length){
+        if(!str.isEmpty() && str.length() <= length){
+            return true;
+        }
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Too Long content.");
     }
 }
