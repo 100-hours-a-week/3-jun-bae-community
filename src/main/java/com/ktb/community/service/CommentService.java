@@ -24,6 +24,7 @@ public class CommentService {
 
     @Transactional
     public Comment addComment(Long postId, User user, String content) {
+        checkStringLengthOrThrow(content, 150);
         Post post = postService.getPostOrThrow(postId);
         Comment comment = Comment.create(user, post, content);
         if(!checkStringLengthOrThrow(comment.getContent(), 150)){
@@ -41,6 +42,7 @@ public class CommentService {
 
     @Transactional
     public Comment updateComment(Long commentId, User user, String content) {
+        checkStringLengthOrThrow(content, 150);
         Comment comment = getActiveComment(commentId);
         checkStringLengthOrThrow(comment.getContent(), 150);
         ownershipVerifier.check(comment, user, "Only author can modify this comment");
